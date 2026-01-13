@@ -9,6 +9,8 @@ let keys = {};
 
 // Game constants
 const MAZE_SIZE = 20;
+const CELL_SIZE = 1;  // Size of each grid cell
+const CELL_CENTER_OFFSET = 0.5;  // Offset to center of cell
 const PACMAN_SPEED = 3;
 const GHOST_SPEED = 2;
 
@@ -246,9 +248,9 @@ function checkWallCollision(x, z) {
     // Check all walls for collision
     for (let wall of walls) {
         // Find the closest point on the wall square to Pacman's position
-        // Wall occupies grid cell from (wall.x, wall.z) to (wall.x + 1, wall.z + 1)
-        const closestX = Math.max(wall.x, Math.min(x, wall.x + 1));
-        const closestZ = Math.max(wall.z, Math.min(z, wall.z + 1));
+        // Wall occupies grid cell from (wall.x, wall.z) to (wall.x + CELL_SIZE, wall.z + CELL_SIZE)
+        const closestX = Math.max(wall.x, Math.min(x, wall.x + CELL_SIZE));
+        const closestZ = Math.max(wall.z, Math.min(z, wall.z + CELL_SIZE));
         
         // Calculate distance from Pacman to closest point on wall
         const dx = x - closestX;
@@ -267,9 +269,9 @@ function checkPelletCollection() {
     const collectionRadius = 0.6;
     pellets.forEach(pellet => {
         if (!pellet.collected) {
-            // Pellet center is at (pellet.x + 0.5, pellet.z + 0.5)
-            const dx = pacman.x - (pellet.x + 0.5);
-            const dz = pacman.z - (pellet.z + 0.5);
+            // Pellet center is at (pellet.x + CELL_CENTER_OFFSET, pellet.z + CELL_CENTER_OFFSET)
+            const dx = pacman.x - (pellet.x + CELL_CENTER_OFFSET);
+            const dz = pacman.z - (pellet.z + CELL_CENTER_OFFSET);
             const distance = Math.sqrt(dx * dx + dz * dz);
             
             if (distance < collectionRadius) {
@@ -416,7 +418,7 @@ function drawMaze() {
     // Draw pellets
     pellets.forEach(pellet => {
         if (!pellet.collected) {
-            const pos = toIso(pellet.x + 0.5, pellet.z + 0.5);
+            const pos = toIso(pellet.x + CELL_CENTER_OFFSET, pellet.z + CELL_CENTER_OFFSET);
             const pulse = Math.sin(Date.now() * 0.005) * 2 + 5;
             
             ctx.beginPath();
