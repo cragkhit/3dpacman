@@ -1,10 +1,10 @@
 # 3D Pacman Game
 
-A fully playable 3D Pacman game built with Three.js and JavaScript.
+A fully playable 3D Pacman game built with HTML5 Canvas and JavaScript.
 
 ## Features
 
-- 🎮 Classic Pacman gameplay in 3D
+- 🎮 Classic Pacman gameplay in 3D isometric view
 - 👻 Four AI-controlled ghosts
 - 🌟 Pellet collection system
 - 📊 Score tracking
@@ -38,9 +38,9 @@ python -m http.server 8000
 
 ## Technologies Used
 
-- **Three.js**: 3D graphics rendering
-- **JavaScript**: Game logic and controls
-- **HTML5/CSS3**: UI and styling
+- **HTML5 Canvas**: 2D context for rendering
+- **JavaScript**: Game logic, isometric 3D rendering, and controls
+- **CSS3**: UI and styling
 
 ## Game Mechanics
 

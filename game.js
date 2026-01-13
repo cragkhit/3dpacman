@@ -9,7 +9,6 @@ let keys = {};
 
 // Game constants
 const MAZE_SIZE = 20;
-const CELL_SIZE = 30;
 const PACMAN_SPEED = 3;
 const GHOST_SPEED = 2;
 
@@ -323,11 +322,29 @@ window.restartGame = restartGame;
 function endGame(won) {
     gameOver = true;
     gameStarted = false;
-    document.getElementById('finalScore').textContent = score;
-    document.getElementById('gameOver').innerHTML = won ? 
-        '<h1>YOU WIN!</h1><p>Final Score: ' + score + '</p><button class="button" onclick="restartGame()">PLAY AGAIN</button>' :
-        '<h1>GAME OVER</h1><p>Final Score: ' + score + '</p><button class="button" onclick="restartGame()">TRY AGAIN</button>';
-    document.getElementById('gameOver').style.display = 'block';
+    const finalScoreElement = document.getElementById('finalScore');
+    finalScoreElement.textContent = score;
+    
+    const gameOverElement = document.getElementById('gameOver');
+    // Clear existing content
+    gameOverElement.innerHTML = '';
+    
+    // Create elements safely
+    const heading = document.createElement('h1');
+    heading.textContent = won ? 'YOU WIN!' : 'GAME OVER';
+    
+    const paragraph = document.createElement('p');
+    paragraph.textContent = 'Final Score: ' + score;
+    
+    const button = document.createElement('button');
+    button.className = 'button';
+    button.textContent = won ? 'PLAY AGAIN' : 'TRY AGAIN';
+    button.onclick = restartGame;
+    
+    gameOverElement.appendChild(heading);
+    gameOverElement.appendChild(paragraph);
+    gameOverElement.appendChild(button);
+    gameOverElement.style.display = 'block';
 }
 
 // Convert grid coordinates to isometric screen coordinates
