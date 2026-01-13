@@ -82,8 +82,8 @@ function initMaze() {
 
 function initPacman() {
     pacman = {
-        x: 1,
-        z: 1,
+        x: 1.5,  // Center of cell (1, 1)
+        z: 1.5,  // Center of cell (1, 1)
         velocityX: 0,
         velocityZ: 0,
         angle: 0
@@ -93,10 +93,10 @@ function initPacman() {
 function initGhosts() {
     const ghostColors = ['#ff0000', '#ff00ff', '#00ffff', '#ffaa00'];
     const ghostPositions = [
-        { x: 18, z: 1 },
-        { x: 18, z: 18 },
-        { x: 1, z: 18 },
-        { x: 9, z: 9 }
+        { x: 18.5, z: 1.5 },   // Center of cells
+        { x: 18.5, z: 18.5 },
+        { x: 1.5, z: 18.5 },
+        { x: 9.5, z: 9.5 }
     ];
 
     for (let i = 0; i < 4; i++) {
@@ -132,17 +132,17 @@ function restartGame() {
     document.getElementById('gameOver').style.display = 'none';
     
     // Reset Pacman
-    pacman.x = 1;
-    pacman.z = 1;
+    pacman.x = 1.5;
+    pacman.z = 1.5;
     pacman.velocityX = 0;
     pacman.velocityZ = 0;
     
     // Reset ghosts
     const ghostPositions = [
-        { x: 18, z: 1 },
-        { x: 18, z: 18 },
-        { x: 1, z: 18 },
-        { x: 9, z: 9 }
+        { x: 18.5, z: 1.5 },
+        { x: 18.5, z: 18.5 },
+        { x: 1.5, z: 18.5 },
+        { x: 9.5, z: 9.5 }
     ];
     ghosts.forEach((ghost, i) => {
         ghost.x = ghostPositions[i].x;
@@ -242,18 +242,21 @@ function updateGhosts(deltaTime) {
 
 function checkWallCollision(x, z) {
     const collisionRadius = 0.4;
-    const gridX = Math.floor(x);
-    const gridZ = Math.floor(z);
     
+    // Check all walls for collision
     for (let wall of walls) {
-        if (wall.x === gridX && wall.z === gridZ) {
-            return true;
-        }
+        // Find the closest point on the wall square to Pacman's position
+        // Wall occupies grid cell from (wall.x, wall.z) to (wall.x + 1, wall.z + 1)
+        const closestX = Math.max(wall.x, Math.min(x, wall.x + 1));
+        const closestZ = Math.max(wall.z, Math.min(z, wall.z + 1));
         
-        const dx = x - wall.x;
-        const dz = z - wall.z;
+        // Calculate distance from Pacman to closest point on wall
+        const dx = x - closestX;
+        const dz = z - closestZ;
         const distance = Math.sqrt(dx * dx + dz * dz);
-        if (distance < 0.5 + collisionRadius) {
+        
+        // Check if Pacman's collision circle overlaps with the wall
+        if (distance < collisionRadius) {
             return true;
         }
     }
@@ -261,11 +264,12 @@ function checkWallCollision(x, z) {
 }
 
 function checkPelletCollection() {
-    const collectionRadius = 0.5;
+    const collectionRadius = 0.6;
     pellets.forEach(pellet => {
         if (!pellet.collected) {
-            const dx = pacman.x - pellet.x;
-            const dz = pacman.z - pellet.z;
+            // Pellet center is at (pellet.x + 0.5, pellet.z + 0.5)
+            const dx = pacman.x - (pellet.x + 0.5);
+            const dz = pacman.z - (pellet.z + 0.5);
             const distance = Math.sqrt(dx * dx + dz * dz);
             
             if (distance < collectionRadius) {
@@ -283,7 +287,7 @@ function checkPelletCollection() {
 }
 
 function checkGhostCollision() {
-    const collisionRadius = 0.5;
+    const collisionRadius = 0.8;
     ghosts.forEach(ghost => {
         const dx = pacman.x - ghost.x;
         const dz = pacman.z - ghost.z;
@@ -297,15 +301,15 @@ function checkGhostCollision() {
                 endGame(false);
             } else {
                 // Reset Pacman position
-                pacman.x = 1;
-                pacman.z = 1;
+                pacman.x = 1.5;
+                pacman.z = 1.5;
                 
                 // Give player brief invincibility by resetting ghost positions
                 const ghostPositions = [
-                    { x: 18, z: 1 },
-                    { x: 18, z: 18 },
-                    { x: 1, z: 18 },
-                    { x: 9, z: 9 }
+                    { x: 18.5, z: 1.5 },
+                    { x: 18.5, z: 18.5 },
+                    { x: 1.5, z: 18.5 },
+                    { x: 9.5, z: 9.5 }
                 ];
                 ghosts.forEach((ghost, i) => {
                     ghost.x = ghostPositions[i].x;
@@ -431,7 +435,7 @@ function drawMaze() {
 }
 
 function drawPacman() {
-    const pos = toIso(pacman.x + 0.5, pacman.z + 0.5);
+    const pos = toIso(pacman.x, pacman.z);
     const radius = 12;
     const mouthAngle = Math.abs(Math.sin(Date.now() * 0.01)) * 0.3;
     
@@ -462,7 +466,7 @@ function drawPacman() {
 
 function drawGhosts() {
     ghosts.forEach(ghost => {
-        const pos = toIso(ghost.x + 0.5, ghost.z + 0.5);
+        const pos = toIso(ghost.x, ghost.z);
         const radius = 12;
         
         // Draw ghost body
